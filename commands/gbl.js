@@ -23,7 +23,8 @@ module.exports = {
 			msg = lowercase(msg, 80)
 			// Repeatable effects
 			msg = randomUppercase(msg, 40)
-			msg = doubleSpace(msg, 60, true)
+			msg = moveSpace(msg, 95)
+			msg = doubleSpace(msg, 60)
 		}
 		
 		
@@ -92,6 +93,41 @@ function randomUppercase (msg, chance, force, iter) {
 		return msg
 }
 
+// Move a space inside a adjacent word
+function moveSpace (msg, chance, force, iter) {
+	force = typeof force != 'undefined' ? force : false
+	iter = typeof iter != 'undefined' ? iter : 0
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	let words = msg.split(' ')
+	const n = _.random(1, words.length - 1)
+	
+	let firstPart = _.take(words, n).join(' ')
+	let secondPart = _.takeRight(words, words.length - n).join(' ')
+	
+	if (_.random(1) === 0) {
+		const fl = secondPart.slice(0, 1)
+		firstPart += fl
+		secondPart = secondPart.slice(1)
+	}
+	else {
+		const ll = firstPart.slice(-1)
+		firstPart = firstPart.slice(0, firstPart.length - 1)
+		secondPart = ll + secondPart
+	}
+	
+	msg = firstPart + ' ' + secondPart
+	iter++
+	
+	// Repeat chance if < max repeat
+	chance *= 0.8
+	if (iter < 5)
+		return moveSpace(msg, chance, false, iter)
+	else
+		return msg
+}
+
 // Double a random space
 function doubleSpace (msg, chance, force, iter) {
 	force = typeof force != 'undefined' ? force : false
@@ -110,28 +146,6 @@ function doubleSpace (msg, chance, force, iter) {
 	chance *= 0.75
 	if (iter < 4)
 		return doubleSpace(msg, chance, false, iter)
-	else
-		return msg
-}
-
-// Move a space inside a adjacent word
-function moveSpace (msg, chance, force, iter) {
-	force = typeof force != 'undefined' ? force : false
-	iter = typeof iter != 'undefined' ? iter : 0
-	if (!force &&_.random(1, 100) > chance)
-		return msg
-	
-	let words = msg.split(' ')
-	const i = _.random(1,words.length - 1)
-	words[i] = ' ' + words[i]
-	
-	msg = words.join(' ')
-	iter++
-	
-	// Repeat chance if < max repeat
-	chance *= 0.65
-	if (iter < 3)
-		return moveSpace(msg, chance, false, iter)
 	else
 		return msg
 }
