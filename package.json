@@ -1,25 +1,25 @@
 {
-  "name": "rd72-bot",
+  "name": "gagabot",
   "version": "1.0.0",
-  "description": "Discord Bot for RD72",
+  "description": "Discord Bot for G²B crew",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OIIOIIOI/rd72-bot.git"
+    "url": "git+https://github.com/OIIOIIOI/gagabot.git"
   },
   "author": "01101101",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/OIIOIIOI/rd72-bot/issues"
+    "url": "https://github.com/OIIOIIOI/gagabot/issues"
   },
-  "homepage": "https://github.com/OIIOIIOI/rd72-bot#readme",
+  "homepage": "https://github.com/OIIOIIOI/gagabot#readme",
   "dependencies": {
     "axios": "^0.19.2",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "node-cron": "^2.0.3"
+    "lodash": "^4.17.20"
   }
 }

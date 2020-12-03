@@ -5,6 +5,8 @@ require('dotenv').config({
 const Discord = require('discord.js');
 // const cron = require("node-cron");
 
+const _ = require('lodash')
+
 const PREFIX = process.env.PREFIX;
 const TOKEN = process.env.TOKEN;
 const TEST_CHANNEL = process.env.TEST_CHANNEL;
@@ -19,6 +21,7 @@ client.commands = new Discord.Collection();
 const activeCommands = [
 	'prune.js',
 	'list-channels.js',
+	'gbl.js',
 ];
 for (const file of activeCommands) {
 	const command = require(`./commands/${file}`);
