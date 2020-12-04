@@ -2,7 +2,7 @@
 
 Discord Bot for the G²B crew server
 
-## How to install and run the bot on server
+## How to install and run the bot on the VPS
 
 - create empty directory where the files will be cloned:
 `mkdir /var/www/gagabot`
@@ -27,7 +27,7 @@ do
                 echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
                 git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f $BRANCH
                 cd $TARGET && npm install
-                # pm2 restart RD72_Bot
+                # pm2 restart GaGaBot
         else
                 echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
         fi
