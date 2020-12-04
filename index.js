@@ -9,7 +9,6 @@ const _ = require('lodash')
 
 const PREFIX = process.env.PREFIX;
 const TOKEN = process.env.TOKEN;
-const TEST_CHANNEL = process.env.TEST_CHANNEL;
 
 // INIT -----------------------------------------------------------------------------
 

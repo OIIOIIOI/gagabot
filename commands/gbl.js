@@ -3,6 +3,7 @@ const _ = require('lodash')
 
 // Load the effects list
 const effects = require('../settings/gbl')
+const GABEL_ID = process.env.GABEL_ID;
 
 module.exports = {
 	name: 'gbl',
@@ -15,8 +16,15 @@ module.exports = {
 		const chan = message.channel
 		const author = message.author
 		
+		console.log(author)
+		
+		// Show info
 		if (args.length === 1 && args[0] === 'info') {
 			this.showChances(chan)
+		}
+		// Do not execute if author is Gabel
+		else if (author.id === GABEL_ID) {
+			message.reply(`non. Nos pouvoirs combinés seraient trop destructeurs.`)
 		}
 		else {
 			// Reconstruct the message
