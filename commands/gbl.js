@@ -16,8 +16,7 @@ module.exports = {
 		const os = originStory(msg, 1)
 		msg = !os ? msg : os
 		// If not applied
-		if (!os)
-		{
+		if (!os) {
 			// Unique effects
 			msg = cutAndPaste(msg, 20)
 			msg = lowercase(msg, 80)
@@ -27,11 +26,17 @@ module.exports = {
 			msg = doubleSpace(msg, 60)
 		}
 		
-		
-		
 		message.delete()
-		chan.send(`${author} *est subitement habité par l'esprit du Gabel et dit :*\n${msg}`)
+		chan.send(`${pickIntro(author)}\n${msg}`)
 	},
+}
+
+function pickIntro (author) {
+	const lines = [
+		`${author} *est subitement habité par l'esprit du Gabel et dit :*`,
+		`*Mais qu'est-ce qui arrive à ${author} ?*`,
+	]
+	return lines[_.random(lines.length - 1)]
 }
 
 // Send the original Gabel message
@@ -150,6 +155,35 @@ function doubleSpace (msg, chance, force, iter) {
 		return msg
 }
 
+// Double a random space
+function removePunctuation (msg, chance, force, iter) {
+	force = typeof force != 'undefined' ? force : false
+	iter = typeof iter != 'undefined' ? iter : 0
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	/*let words = msg.split(' ')
+	const i = _.random(1,words.length - 1)
+	words[i] = ' ' + words[i]
+	
+	msg = words.join(' ')
+	iter++
+	
+	// Repeat chance if < max repeat
+	chance *= 0.75
+	if (iter < 4)
+		return doubleSpace(msg, chance, false, iter)
+	else*/
+		return msg
+}
+
+/*function getAllIndexes(arr, val) {
+	var indexes = [], i = -1;
+	while ((i = arr.indexOf(val, i+1)) != -1){
+		indexes.push(i);
+	}
+	return indexes;
+}*/
 
 
 
