@@ -24,6 +24,12 @@ module.exports = {
 			msg = randomUppercase(msg, 40)
 			msg = moveSpace(msg, 95)
 			msg = doubleSpace(msg, 60)
+			msg = removePunctuation(msg, 50)
+			msg = removePair(msg, 60)
+			msg = wrongPair(msg, 60)
+			msg = switchLetters(msg, 40)
+			msg = removeRandomLetter(msg, 40)
+			// msg = replaceWord(msg, 75, true)
 		}
 		
 		message.delete()
@@ -33,8 +39,8 @@ module.exports = {
 
 function pickIntro (author) {
 	const lines = [
-		`${author} *est subitement habité par l'esprit du Gabel et dit :*`,
-		`*Mais qu'est-ce qui arrive à ${author} ?*`,
+		`${author} *est subitement habité par l'esprit du Gabel...*`,
+		`${author} *s'est fait piquer par l'araignée Gypsie !*`,
 	]
 	return lines[_.random(lines.length - 1)]
 }
@@ -77,9 +83,8 @@ function lowercase (msg, chance, force) {
 }
 
 // Uppercase the first letter of a random word
-function randomUppercase (msg, chance, force, iter) {
+function randomUppercase (msg, chance, force) {
 	force = typeof force != 'undefined' ? force : false
-	iter = typeof iter != 'undefined' ? iter : 0
 	if (!force &&_.random(1, 100) > chance)
 		return msg
 	
@@ -88,28 +93,23 @@ function randomUppercase (msg, chance, force, iter) {
 	words[i] = _.upperFirst(words[i])
 	
 	msg = words.join(' ')
-	iter++
 	
-	// Repeat chance if < max repeat
-	chance *= 0.5
-	if (iter < 3)
-		return randomUppercase(msg, chance, false, iter)
-	else
-		return msg
+	// Repeat chance
+	return randomUppercase(msg, chance * 0.5)
 }
 
 // Move a space inside a adjacent word
-function moveSpace (msg, chance, force, iter) {
+function moveSpace (msg, chance, force) {
 	force = typeof force != 'undefined' ? force : false
-	iter = typeof iter != 'undefined' ? iter : 0
 	if (!force &&_.random(1, 100) > chance)
 		return msg
 	
-	let words = msg.split(' ')
-	const n = _.random(1, words.length - 1)
+	let parts = _splitInTwo(msg, ' ')
+	if (!parts)
+		return msg
 	
-	let firstPart = _.take(words, n).join(' ')
-	let secondPart = _.takeRight(words, words.length - n).join(' ')
+	let firstPart = parts[0]
+	let secondPart = parts[1]
 	
 	if (_.random(1) === 0) {
 		const fl = secondPart.slice(0, 1)
@@ -123,20 +123,14 @@ function moveSpace (msg, chance, force, iter) {
 	}
 	
 	msg = firstPart + ' ' + secondPart
-	iter++
 	
-	// Repeat chance if < max repeat
-	chance *= 0.8
-	if (iter < 5)
-		return moveSpace(msg, chance, false, iter)
-	else
-		return msg
+	// Repeat chance
+	return moveSpace(msg, chance * 0.8)
 }
 
 // Double a random space
-function doubleSpace (msg, chance, force, iter) {
+function doubleSpace (msg, chance, force) {
 	force = typeof force != 'undefined' ? force : false
-	iter = typeof iter != 'undefined' ? iter : 0
 	if (!force &&_.random(1, 100) > chance)
 		return msg
 	
@@ -145,47 +139,148 @@ function doubleSpace (msg, chance, force, iter) {
 	words[i] = ' ' + words[i]
 	
 	msg = words.join(' ')
-	iter++
 	
-	// Repeat chance if < max repeat
-	chance *= 0.75
-	if (iter < 4)
-		return doubleSpace(msg, chance, false, iter)
-	else
-		return msg
+	// Repeat chance
+	return doubleSpace(msg, chance * 0.75)
 }
 
-// Double a random space
-function removePunctuation (msg, chance, force, iter) {
+// Remove a . or ,
+function removePunctuation (msg, chance, force) {
 	force = typeof force != 'undefined' ? force : false
-	iter = typeof iter != 'undefined' ? iter : 0
 	if (!force &&_.random(1, 100) > chance)
 		return msg
 	
-	/*let words = msg.split(' ')
-	const i = _.random(1,words.length - 1)
-	words[i] = ' ' + words[i]
+	let chars = ['.', ',']
+	if (_.random(1) === 0)
+		chars = _.reverse(chars)
 	
-	msg = words.join(' ')
-	iter++
+	// Try finding first char
+	let parts = _splitInTwo(msg, chars.shift())
+	if (!parts) {
+		// Try finding other char
+		parts = _splitInTwo(msg, chars.shift())
+		if (!parts)
+			return msg
+	}
 	
-	// Repeat chance if < max repeat
-	chance *= 0.75
-	if (iter < 4)
-		return doubleSpace(msg, chance, false, iter)
-	else*/
-		return msg
+	msg = parts[0] + parts[1]
+	
+	// Repeat chance
+	return removePunctuation(msg, chance * 0.5)
 }
 
-/*function getAllIndexes(arr, val) {
-	var indexes = [], i = -1;
-	while ((i = arr.indexOf(val, i+1)) != -1){
-		indexes.push(i);
+// Remove a letter from a pair
+function removePair (msg, chance, force) {
+	force = typeof force != 'undefined' ? force : false
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	let results = []
+	const p = /ss|ll|mm|pp|nn|tt|rr|ff/gi
+	while ((m = p.exec(msg)) != null) {
+		results.push(m)
 	}
-	return indexes;
-}*/
+	if (results.length === 0)
+		return msg
+	
+	const n = _.random(0, results.length - 1)
+	msg = msg.substr(0, results[n].index) + msg.substr(results[n].index + 1)
+	
+	// Repeat chance
+	return removePair(msg, chance * 0.3)
+}
 
+// Mess up a pair of letters
+function wrongPair (msg, chance, force) {
+	force = typeof force != 'undefined' ? force : false
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	let results = []
+	const p = /ss|ll|mm|pp|nn|tt|rr|ff/gi
+	while ((m = p.exec(msg)) != null) {
+		results.push(m)
+	}
+	if (results.length === 0)
+		return msg
+	
+	const n = _.random(0, results.length - 1)
+	let firstPart, pair, secondPart
+	if (_.random(1) === 0) {
+		firstPart = msg.substr(0, results[n].index - 1)
+		pair = msg.substr(results[n].index - 1, 2)
+		secondPart = msg.substr(results[n].index + 1)
+	}
+	else {
+		firstPart = msg.substr(0, results[n].index + 1)
+		pair = msg.substr(results[n].index + 1, 2)
+		secondPart = msg.substr(results[n].index + 3)
+	}
+	pair = pair.split('').reverse().join('')
+	
+	msg = firstPart + pair + secondPart
+	
+	// Repeat chance
+	return wrongPair(msg, chance * 0.3)
+}
 
+function switchLetters (msg, chance, force) {
+	force = typeof force != 'undefined' ? force : false
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	const index = _.random(0, msg.length - 2)
+	
+	let firstPart = msg.substr(0, index)
+	let pair = msg.substr(index, 2)
+	let secondPart = msg.substr(index + 2)
+	pair = pair.split('').reverse().join('')
+	
+	msg = firstPart + pair + secondPart
+	
+	// Repeat chance
+	return switchLetters(msg, chance * 0.3)
+}
+
+function removeRandomLetter (msg, chance, force) {
+	force = typeof force != 'undefined' ? force : false
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	const index = _.random(0, msg.length - 1)
+	
+	let firstPart = msg.substr(0, index)
+	let secondPart = msg.substr(index + 1)
+	
+	msg = firstPart + secondPart
+	
+	// Repeat chance
+	return removeRandomLetter(msg, chance * 0.3)
+}
+
+function replaceWord (msg, chance, force) {
+	force = typeof force != 'undefined' ? force : false
+	if (!force &&_.random(1, 100) > chance)
+		return msg
+	
+	
+	
+	// Repeat chance
+	return replaceWord(msg, chance * 0.75)
+}
+
+// UTILS
+
+function _splitInTwo (str, separator) {
+	const words = str.split(separator)
+	if (words.length < 2)
+		return false
+	
+	const n = _.random(1, words.length - 1)
+	let firstPart = _.take(words, n).join(separator)
+	let secondPart = _.takeRight(words, words.length - n).join(separator)
+	return [firstPart, secondPart]
+}
 
 
 
