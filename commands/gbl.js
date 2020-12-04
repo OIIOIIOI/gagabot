@@ -21,7 +21,7 @@ module.exports = {
 			msg = cutAndPaste(msg, 20)
 			msg = lowercase(msg, 80)
 			// Repeatable effects
-			msg = randomUppercase(msg, 40)
+			msg = randomUppercase(msg, 20)
 			msg = moveSpace(msg, 95)
 			msg = doubleSpace(msg, 60)
 			msg = removePunctuation(msg, 50)
@@ -95,7 +95,7 @@ function randomUppercase (msg, chance, force) {
 	msg = words.join(' ')
 	
 	// Repeat chance
-	return randomUppercase(msg, chance * 0.5)
+	return randomUppercase(msg, chance * 0.2)
 }
 
 // Move a space inside a adjacent word
